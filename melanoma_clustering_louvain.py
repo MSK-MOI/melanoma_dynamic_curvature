@@ -51,16 +51,8 @@ print(" PPI loaded. %i vertices, %i edges" % (adj.shape[0] , adj.nnz))
 
 # load gene list to subset
 print("Load in gene list to subset expression data...")
-# if else cases to import gene lists with different column names
-if "oncokb" in genelist_file:
-    genelist = pd.read_csv(genelist_file, sep='\t')
-    genelist_hgnc = genelist['Hugo Symbol'].values.astype(str)
-elif "MGDB" in genelist_file:
-    genelist = pd.read_csv(genelist_file, usecols=[1])
-    genelist_hgnc = genelist['Official Symbol'].values.astype(str)
-elif "PD1_BLOCKADE" in genelist_file:
-    genelist = pd.read_csv(genelist_file, skiprows=2, names=["Gene"])
-    genelist_hgnc = genelist['Gene'].values.astype(str)
+genelist = pd.read_csv(genelist_file, skiprows=2, names=["Gene"])
+genelist_hgnc = genelist['Gene'].values.astype(str)
 print(" Gene list loaded. %i unique genes." % len(np.unique(genelist_hgnc)) )
 
 # find matching genes in PPI topology genes + expression data + subset gene list
