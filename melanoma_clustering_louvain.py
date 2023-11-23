@@ -3,7 +3,7 @@
 # analysis code written by Kevin A Murgas
 # Stony Brook University, Dept. of Biomedical Informatics
 # advisor: Allen Tannenbaum PhD
-# in collaboration with: Rena Elkin PhD, Emil Saucan PhD, Joseph Deasy PhD
+# in collaboration with: Rena Elkin PhD, Nadeem Riaz PhD, Emil Saucan PhD, Joseph Deasy PhD
 
 #%%
 import os
@@ -166,7 +166,7 @@ print("Threshold tau:", tau[tau.tau_id == tau_crit_diff].value.values)
 ti = np.where(tau.tau_id == tau_crit_diff)[0].item()
 orc_crit = orc_diff.iloc[:,ti].values.squeeze()
 
-# integrate orc up to orc_crit
+# integrate orc up to orc_crit (smoothed estimate)
 dtau = np.diff(tau.value)
 orc_int = orc_diff.iloc[:,:ti].multiply(dtau[:ti],axis=1).sum(axis=1).values
 
@@ -208,7 +208,7 @@ ax.set_xlabel('Scale Parameter $\\tau$')
 ax.set_ylabel('Ollivier-Ricci curvature $\kappa$')
 plt.show()
 
-#fig.savefig(os.path.join(results_dir,"kappa_tau_lineplot_int.png"), bbox_inches='tight')
+fig.savefig(os.path.join(results_dir,"kappa_tau_lineplot_int.png"), bbox_inches='tight')
 
 #%%
 # Table 1: top highest and lowest edges
@@ -235,13 +235,7 @@ for e in np.argsort(orc_int)[:5]:
 # create networkx graph object
 g = nx.from_edgelist(orc_diff.index)
 
-# set edge attribute for orc_crit (ORC at threshold tau)
-attr_dict = dict(zip(*(orc_diff.index, orc_crit.tolist())))
-nx.set_edge_attributes(g, attr_dict, "orc_crit")
-attr_dict = dict(zip(*(orc_diff.index, orc_int.tolist())))
-nx.set_edge_attributes(g, attr_dict, "orc_int")
-
-# scale orc_int to [0,1]
+# scale orc_int to [0,1] and set as edge attribute
 orc_int_scaled = (orc_int - min(orc_int)) / (max(orc_int) - min(orc_int))
 attr_dict = dict(zip(*(orc_diff.index, orc_int_scaled.tolist())))
 nx.set_edge_attributes(g, attr_dict, "orc_int_scaled")
@@ -266,7 +260,7 @@ pd.DataFrame({'Gene': geneNames_max,
               'cluster': clusters_lv,
               'module': clusters_lv+1}) \
             .sort_values('cluster') \
-#            .to_csv(os.path.join(results_dir,'louvain_weighted_clusters.csv'), index=False)
+            .to_csv(os.path.join(results_dir,'louvain_weighted_clusters.csv'), index=False)
 
 # load previous computed clusters
 cluster_data = pd.read_csv(os.path.join(results_dir,'louvain_weighted_clusters.csv'), index_col=0)
@@ -411,11 +405,11 @@ def _position_nodes(g, partition, **kwargs):
 # create networkx graph object
 g = nx.from_edgelist(orc_diff.index)
 
-# set edge attribute for orc_crit (ORC at threshold tau)
-attr_dict = dict(zip(*(orc_diff.index, orc_crit.tolist())))
-nx.set_edge_attributes(g, attr_dict, "orc_crit")
+# set edge attribute for orc_int (integral-smoothed ORC at threshold tau)
 attr_dict = dict(zip(*(orc_diff.index, orc_int.tolist())))
 nx.set_edge_attributes(g, attr_dict, "orc_int")
+
+# set node attribute for cluster label
 nx.set_node_attributes(g, louvain_partition, "cluster_lv")
 
 # plot network with clusters
@@ -429,7 +423,7 @@ nx.draw_networkx_nodes(g, pos=layout,
                        node_color=plt.cm.Set1(clusters_lv),
                        node_size=10)
 nx.draw_networkx_edges(g, pos=layout, alpha=0.3,
-                       edge_color = [e[2] for e in g.edges(data="orc_int")], # orc_crit orc_int
+                       edge_color = [e[2] for e in g.edges(data="orc_int")],
                        edge_cmap = plt.cm.coolwarm_r,
                        edge_vmin=-1.2, edge_vmax=1.2 # for orc_int
                        )
@@ -508,7 +502,7 @@ cbar = fig.colorbar(col)
 cbar.set_label('$\\bar{\kappa}_{crit}$')
 plt.show()
 
-#fig.savefig(os.path.join(results_dir,"cross_cluster_dotplot_lv.pdf"), bbox_inches='tight')
+fig.savefig(os.path.join(results_dir,"cross_cluster_dotplot_lv.pdf"), bbox_inches='tight')
 
 #%%
 # compare all within and between cluster edges
