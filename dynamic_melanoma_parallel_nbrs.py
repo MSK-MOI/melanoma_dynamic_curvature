@@ -58,6 +58,8 @@ def orc_edge(ie, ti):
     return w
 
 # function to compute ORC over all graph edges for each tau
+# uses parallel processing pool to accelerate computation
+# suggest running on high performance cluster
 def compute_orc_all():
     edge_w_all = []
     edge_orc_all = []
