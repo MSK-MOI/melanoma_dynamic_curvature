@@ -1,5 +1,5 @@
 # melanoma_dynamic_curvature
-Analysis code for study: Multi-Scale Geometric Network Analysis Identifies Melanoma Immunotherapy Response Gene Modules. By K.A. Murgas et al. (under submission)
+Analysis code for study: Multi-Scale Geometric Network Analysis Identifies Melanoma Immunotherapy Response Gene Modules. By K.A. Murgas, R. Elkin, N. Riaz, E. Saucan, J.O. Deasy, A.R. Tannenbaum. (under submission)
 
 This repository contains the following files used for analysis:
 1. prep_GSE91061.R was used to pre-process the publically available RNA-seq dataset for analysis. After downloading dataset GSE91061 from NCBI GEO (link: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE91061), this script will prepare data including filtering and quantile normalization to reproduce the data analyzed in this study
