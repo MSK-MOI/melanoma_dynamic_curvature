@@ -3,7 +3,7 @@
 # analysis code written by Kevin Murgas
 # Stony Brook University, Dept. of Biomedical Informatics
 # advisor: Allen Tannenbaum PhD
-# in collaboration with: Rena Elkin PhD, Emil Saucan PhD, Joseph Deasy PhD
+# in collaboration with: Rena Elkin PhD, Nadeem Riaz PhD, Emil Saucan PhD, Joseph Deasy PhD
 
 library(tidyverse)
 library(readxl)
@@ -216,7 +216,7 @@ dev.off()
 
 ### FIGURE 4: Module 6 and Treatment Response
 
-# Figure 3D: waterfall plot of each module colored by progressive/stable response
+# Figure 4A: waterfall plot of each module colored by progressive/stable response
 plot_df = module_score_scaled %>% t %>% t %>% reshape2::melt() %>%
   dplyr::rename(module=Var1, pat=Var2) %>%
   left_join(data.frame(pat = match_pats,
